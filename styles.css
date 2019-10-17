@@ -6,3 +6,25 @@
 	font: inherit;
 	vertical-align: baseline;
 }
+
+body {
+  margin: 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+div {border: 1px solid black;}
+div#score-box {
+  width: 5em;
+  text-align: center;
+}
+div#message-box {
+  width: 20em;
+  margin-left: 1em;
+}
+
+button {
+  margin: 0 5%;
+  padding: 2em;
+}

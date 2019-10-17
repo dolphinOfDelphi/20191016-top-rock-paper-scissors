@@ -1,67 +1,95 @@
-let playerScore = 0;
-let computerScore = 0;
+const ROCK = 0, PAPER = 1, SCISSORS = 2;
+
+let playerScore = 0, computerScore = 0;
+let gameOn = true;
 
 function computerPlay() {
-    switch (Math.floor(Math.random() * 3)) {
-        case 0 :
+    return Math.floor(Math.random() * 3);
+}
+
+function playString(play) {
+    switch (play) {
+        case ROCK:
             return `rock`;
-        case 1:
+        case PAPER:
             return `paper`;
-        case 2:
+        default:
             return `scissors`;
     }
 }
 
-function playRound(playerSelection, computerSelection) {
-    const WIN = 1, TIE = 0, LOSE = -1;
-    let result;
-    if (/rock/i.test(playerSelection)) {
-        if (computerSelection === `rock`) {
-            result = TIE;
-        } else if (computerSelection === `paper`) {
-            result = LOSE;
-        } else {
-            result = WIN;
-        }
-    } else if (/paper/i.test(playerSelection)) {
-        if (computerSelection === `rock`) {
-            result = WIN;
-        } else if (computerSelection === `paper`) {
-            result = TIE;
-        } else {
-            result = LOSE;
-        }
-    } else if (/scissors/i.test(playerSelection)) {
-        if (computerSelection === `rock`) {
-            result = LOSE;
-        } else if (computerSelection === `paper`) {
-            result = WIN;
-        } else {
-            result = TIE;
-        }
-    } else {
-        return `Invalid move.`
-    }
+function playRound(playerMove) {
+    if (gameOn) {
+        const WIN = 1, TIE = 0, LOSE = -1;
+        let computerMove;
+        let result;
 
-    if (result === WIN) {
-        playerScore++;
-        return `You win! ${playerSelection} beats ${computerSelection}`;
-    } else if (result === LOSE) {
-        computerScore++;
-        return `You lose! ${computerSelection} beats ${playerSelection}`;
-    } else {
-        return `Tie! ${playerSelection} ties with ${computerSelection}`;
+        switch (playerMove) {
+            case ROCK:
+                switch (computerMove = computerPlay()) {
+                    case ROCK:
+                        result = TIE;
+                        break;
+                    case PAPER:
+                        result = LOSE;
+                        break;
+                    default:
+                        result = WIN;
+                }
+                break;
+            case PAPER:
+                switch (computerMove = computerPlay()) {
+                    case ROCK:
+                        result = WIN;
+                        break;
+                    case PAPER:
+                        result = TIE;
+                        break;
+                    default:
+                        result = LOSE;
+                }
+                break;
+            default:
+                switch (computerMove = computerPlay()) {
+                    case ROCK:
+                        result = LOSE;
+                        break;
+                    case PAPER:
+                        result = WIN;
+                        break;
+                    default:
+                        result = TIE;
+                }
+        }
+
+        switch (result) {
+            case WIN:
+                playerScore++;
+                updateGame(`You win! ${playString(playerMove)} beats ${playString(computerMove)}.`);
+                break;
+            case LOSE:
+                computerScore++;
+                updateGame(`You lose! ${playString(computerMove)} beats ${playString(playerMove)}.`);
+                break;
+            default:
+                updateGame(`Tie! ${playString(playerMove)} ties with ${playString(computerMove)}.`);
+        }
     }
 }
 
-function game() {
-    for (let i = 0; i < 5; i++) {
-        console.log(playRound(prompt(`Choose your move: `), computerPlay()));
+function updateGame(message) {
+    if (playerScore === 5 || computerScore === 5) {
+        if (playerScore === 5) {
+            message += `\nYou win the game!`;
+        } else {
+            message += `\nYou lose the game!`;
+        }
+        gameOn = false;
     }
-    console.log(playerScore < computerScore ? `You lose!`
-        : playerScore === computerScore ? `Tie!`
-            : `You win!`);
-    console.log(`${playerScore} to ${computerScore}`);
+    document.querySelector('#score-box').textContent = `${playerScore}-${computerScore}`;
+    document.querySelector('#message-box').textContent = message;
 }
 
-game();
+document.querySelector('#rock-button').addEventListener('click', () => playRound(ROCK));
+document.querySelector('#paper-button').addEventListener('click', () => playRound(PAPER));
+document.querySelector('#scissors-button').addEventListener('click', () => playRound(SCISSORS));
